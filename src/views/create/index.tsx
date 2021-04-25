@@ -4,15 +4,22 @@ import {
     TextField, 
     Button
 } from '@material-ui/core'
+import UserController from '../../controllers/user'
 
 export default () => {
-    const [nome, setNome] = useState<String>('')
-    const [idate, setIdade] = useState<String>('')
-    const [senha, setSenha] = useState<String>('')
-    const [email, setEmail] = useState<String>('')
+    const [nome, setNome] = useState<any>('Aldivio Alves Lisboa')
+    const [idade, setIdade] = useState<any>(32)
+    const [senha, setSenha] = useState<any>('123456')
+    const [email, setEmail] = useState<any>('aldivio89@hotmail.com')
 
     const handleSaveUser = ()=>{
-        console.log('deverá salvar o user ')
+        const user = new UserController()
+        user.create({
+            nome, 
+            idade, 
+            senha,
+            email
+        })
     }
     return (
         <>
@@ -20,12 +27,14 @@ export default () => {
 
             <C.Row>
                 <TextField
+                    value = {nome}
                     variant="outlined"
                     label="Nome"
                     id="name"
                     onChange={e => setNome(e.target.value)}
                 />
                 <TextField
+                    value={idade}
                     variant="outlined"
                     label="Idade"
                     id="idade"
@@ -34,12 +43,14 @@ export default () => {
             </C.Row>
             <C.Row>
                 <TextField
+                    value= {email}
                     variant="outlined"
                     label="Email"
                     id="email"
                     onChange={e => setEmail(e.target.value)}
                 />
                 <TextField
+                    value= {senha}
                     type="password"
                     autoComplete="current-password"
                     variant="outlined"
