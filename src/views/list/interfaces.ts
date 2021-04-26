@@ -1,6 +1,7 @@
-export interface Users{
+export interface User{
     id: number,
     nome:string, 
-    idade: number,
-    email: string
+    idade: string,
+    email: string,
+    senha: string
 }

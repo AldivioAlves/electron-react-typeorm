@@ -7,7 +7,6 @@ const entities = [
 
 
 const  options:ConnectionOptions ={
-    "name":"xablau",
     "type":"postgres", 
     "synchronize":true,
     "host":"localhost",

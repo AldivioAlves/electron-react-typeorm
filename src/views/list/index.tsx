@@ -1,50 +1,51 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { ipcRenderer } from 'electron'
+import { Link } from 'react-router-dom'
 import * as C from './styles'
 import {
-    Users
+    User
 } from './interfaces'
 import {
     DeleteOutline,
     Edit
 } from '@material-ui/icons'
 import {
-    IconButton, 
+    IconButton,
     Button
 } from '@material-ui/core'
 
-const mock: Array<Users> = [
-    {
-        id: 1,
-        nome: 'Aldivio',
-        email: 'aldiviof89@hotmail.com',
-        idade: 32
-    },
-    {
-        id: 2,
-        nome: 'Thais Nascimento',
-        email: 'thais@hotmail.com',
-        idade: 32
-    },
-    {
-        id: 3,
-        nome: 'Luciene',
-        email: 'luciene@hotmail.com',
-        idade: 33
-    },
-]
 export default () => {
+    const [users, setUsers] = useState<User[] | []>([])
+
+    const deleteUser = (id: number) => {
+
+        const result = ipcRenderer.sendSync('delete-user', id)
+
+        if (result) {
+            setUsers(
+                users.filter((user: User) => user.id != id)
+            )
+        }
+    }
+
+    useEffect(() => {
+        ipcRenderer.send('list-users', 'list-users')
+        ipcRenderer.on('reply-list-users', (event, data) => {
+            setUsers(data)
+        })
+    }, [])
+
     return (
         <>
-        <C.Header>
-            <h1 style ={{marginRight:20}}>listagem de usuários:</h1>
-            <Link to='/create' style ={{textDecoration:'none'}}>
-            <Button color = 'primary' variant="contained"
-            >
-                Adicionar
+            <C.Header>
+                <h1 style={{ marginRight: 20 }}>listagem de usuários:</h1>
+                <Link to='/create' style={{ textDecoration: 'none' }}>
+                    <Button color='primary' variant="contained"
+                    >
+                        Adicionar
             </Button>
-            </Link>
-        </C.Header>
+                </Link>
+            </C.Header>
 
             <C.Row>
                 <C.ContInfoUser
@@ -67,35 +68,42 @@ export default () => {
                     <h2>Ações</h2>
                 </C.ContInfoUser>
             </C.Row>
+            <div>
             {
-                mock.map(user => (
-                    <C.Row key = {user.id}>
+                users.map((user: User) => (
+                    <C.Row key={user.id}>
                         <C.ContInfoUser
                             style={{ flex: 0.2 }}
                         >
-                            <h4>{user.id}</h4>
+                            <p>{user.id}</p>
                         </C.ContInfoUser>
                         <C.ContInfoUser>
-                            <h4>{user.nome}</h4>
+                            <p>{user.nome}</p>
                         </C.ContInfoUser>
                         <C.ContInfoUser
                             style={{
                                 justifyContent: 'flex-start',
                             }}
                         >
-                            <h4>{user.email}</h4>
+                            <p>{user.email}</p>
                         </C.ContInfoUser>
                         <C.ContInfoUser
                             style={{ flex: 0.5 }}
                         >
-                            <h4>{user.idade}</h4>
+                            <p>{user.idade}</p>
                         </C.ContInfoUser>
                         <C.ContInfoUser>
                             <C.ContButtons>
-                                <IconButton >
-                                    <Edit color='primary' />
-                                </IconButton>
-                                <IconButton>
+                                <Link
+                                    to={`/update/${user.id}`}
+                                >
+                                    <IconButton >
+                                        <Edit color='primary' />
+                                    </IconButton>
+                                </Link>
+                                <IconButton
+                                    onClick={() => { deleteUser(user.id) }}
+                                >
                                     <DeleteOutline
                                         color='secondary'
                                     />
@@ -105,6 +113,7 @@ export default () => {
                     </C.Row>
                 ))
             }
+        </div>
         </>
     )
 }

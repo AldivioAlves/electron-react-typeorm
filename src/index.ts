@@ -2,7 +2,6 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 import { createConnection, getRepository, getConnection } from 'typeorm'
 import options from '../src/config/database';
-import { con } from './global';
 const electron = require('electron')
 
 
@@ -15,6 +14,7 @@ const createWindow = async () => {
     height: 600,
     width: 800,
     fullscreen: false,
+    fullscreenable:false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -54,12 +54,6 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
-// createConnection(options).then((connection)=>{
-//   console.log('conexao estabelecida')
-
-// })
-// .catch(err=>console.log("error na conexao!", err))
 
 
 

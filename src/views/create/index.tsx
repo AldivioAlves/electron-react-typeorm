@@ -1,40 +1,53 @@
-import React, { useState } from 'react'
-import * as C from './styles'
+import React, { useEffect, useState } from 'react'
 import {
-    TextField, 
+    TextField,
     Button
 } from '@material-ui/core'
-import UserController from '../../controllers/user'
+import {Link} from 'react-router-dom'
+import { ipcRenderer } from 'electron'
+import * as C from './styles'
 
 export default () => {
-    const [nome, setNome] = useState<any>('Aldivio Alves Lisboa')
-    const [idade, setIdade] = useState<any>(32)
-    const [senha, setSenha] = useState<any>('123456')
-    const [email, setEmail] = useState<any>('aldivio89@hotmail.com')
+    const [nome, setNome] = useState<String >('')
+    const [idade, setIdade] = useState<String >('')
+    const [senha, setSenha] = useState<String >('')
+    const [email, setEmail] = useState<String >('')
 
-    const handleSaveUser = ()=>{
-        const user = new UserController()
-        user.create({
-            nome, 
-            idade, 
+    const handleSaveUser = () => {
+        if(!nome || !idade || !senha || !email){
+            console.log("oppa cade todos os dados??? ")
+            return
+        }
+       const result =  ipcRenderer.sendSync('create-user', {
+            nome,
+            idade,
             senha,
             email
         })
+        if(result){
+            setNome('')
+            setIdade('')
+            setEmail('')
+            setSenha('')
+        }
     }
     return (
         <>
+        <Link to = {'/'}>
+            Inicio
+        </Link>
             <h1>Cadastro de Usuarios:</h1>
 
             <C.Row>
                 <TextField
-                    value = {nome}
+                    value={nome}
                     variant="outlined"
                     label="Nome"
                     id="name"
                     onChange={e => setNome(e.target.value)}
                 />
                 <TextField
-                    value={idade}
+                    value= {idade}
                     variant="outlined"
                     label="Idade"
                     id="idade"
@@ -43,14 +56,14 @@ export default () => {
             </C.Row>
             <C.Row>
                 <TextField
-                    value= {email}
+                    value ={email}
                     variant="outlined"
                     label="Email"
                     id="email"
                     onChange={e => setEmail(e.target.value)}
                 />
                 <TextField
-                    value= {senha}
+                    value = {senha}
                     type="password"
                     autoComplete="current-password"
                     variant="outlined"
@@ -61,12 +74,12 @@ export default () => {
             </C.Row>
             <C.Row
                 style={{
-                    justifyContent: 'flex-end', 
+                    justifyContent: 'flex-end',
                     marginTop: 40
                 }}
             >
                 <Button variant="contained" color="primary"
-                onClick = {handleSaveUser}
+                    onClick={handleSaveUser}
                 >
                     Salvar
                 </Button>
